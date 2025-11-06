@@ -191,9 +191,11 @@ function us_widgets_init() {
 	//override WP gallery
 	if ( class_exists( 'WP_Widget_Media_Gallery' ) ) {
 		$filepath = us_locate_file( 'widgets/us_gallery.php' );
-		include $filepath;
-		unregister_widget( 'WP_Widget_Media_Gallery' );
-		register_widget( 'US_Widget_Media_Gallery' );
+		if ( $filepath !== FALSE AND ! empty( $filepath ) AND file_exists( $filepath ) ) {
+			include $filepath;
+			unregister_widget( 'WP_Widget_Media_Gallery' );
+			register_widget( 'US_Widget_Media_Gallery' );
+		}
 	}
 
 }

@@ -1,6 +1,6 @@
 # Live Editor for WPBakery
 
-**Version:** 1.05
+**Version:** 1.08
 **Author:** DesignStack
 **Requires:** WordPress 5.0+, WPBakery Page Builder
 **License:** GPL v2 or later
@@ -161,6 +161,42 @@ Custom CSS is stored in two post meta fields:
 Both are updated simultaneously to ensure compatibility with WPBakery's native editor.
 
 ## Changelog
+
+### 1.08 (CRITICAL FIX - Missing Widget Files)
+- **COMPREHENSIVE FIX**: Fixed ValueError "Path cannot be empty" in widgets.php:194
+- **Root Cause**: Widget files were missing from plugin causing empty file paths
+- **Solution 1**: Added proper error checking before including widget files
+  * Check if filepath is not FALSE
+  * Check if filepath is not empty
+  * Check if file actually exists before including
+- **Solution 2**: Copied complete widgets directory from us-core (7 widget files):
+  * us_blog.php - Blog widget
+  * us_contacts.php - Contacts widget
+  * us_gallery.php - Gallery widget (the one causing the error)
+  * us_login.php - Login widget
+  * us_portfolio.php - Portfolio widget
+  * us_socials.php - Social links widget
+  * index.php - Directory protection
+- **COMPREHENSIVE**: Fixed both the immediate error AND added all missing widget files to prevent future errors
+- This prevents ValueError on widget initialization
+
+### 1.07 (CRITICAL FIX - Duplicate File Loading)
+- **COMPREHENSIVE FIX**: Removed duplicate file loading causing function redeclaration errors
+- Fixed fatal error: "Cannot redeclare us_sort_by_weight()" in functions/helpers.php:316
+- **Root Cause Analysis**: functions/helpers.php and includes/us-helpers.php are IDENTICAL files (both 5170 lines, same MD5 hash: 9dead5f28c0ebd90ee214acf30b89830)
+- **Solution**: Removed loading of functions/helpers.php since includes/us-helpers.php is already loaded earlier
+- **Verification**: Checked builder/helpers.php vs includes/builder-helpers.php - also identical but only loaded once (no issue)
+- Added comprehensive comments explaining why certain files are NOT loaded to prevent future confusion
+- **CRITICAL**: This eliminates ALL function redeclaration errors from duplicate helper file loading
+- **COMPREHENSIVE**: This fix prevents the reactive pattern - identified and fixed the systemic issue
+
+### 1.06 (CRITICAL FIX)
+- **EMERGENCY FIX**: Added missing US_THEMEVERSION constant
+- Fixed fatal error: "Undefined constant US_THEMEVERSION" in migration.php:119
+- Migration system requires US_THEMEVERSION to determine database version
+- Added constant definition: `define( 'US_THEMEVERSION', LEW_VERSION )`
+- This allows the migration system to work properly in standalone plugin mode
+- **CRITICAL**: This fix allows the plugin to fully activate without crashing
 
 ### 1.05 (CRITICAL FIX)
 - **EMERGENCY FIX**: Added function_exists() checks to ALL functions in usof.php
