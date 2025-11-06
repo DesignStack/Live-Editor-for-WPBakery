@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Live Editor for WPBakery
  * Plugin URI: https://designstack.co.uk
- * Description: Enhances WPBakery Page Builder with a live frontend editor interface for real-time visual editing.
+ * Description: Enhances WPBakery Page Builder with a live frontend editor interface for real-time visual editing. This plugin brings the powerful US Builder (Live Editor) from Impreza theme to any WordPress site using WPBakery.
  * Version: 1.0
  * Author: DesignStack
  * Author URI: https://designstack.co.uk
@@ -21,26 +21,97 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Direct access not permitted.' );
 }
 
-// Define plugin constants
+/**
+ * ============================================================================
+ * DEFINE PLUGIN CONSTANTS
+ * ============================================================================
+ */
+
+// Plugin version
 if ( ! defined( 'LEW_VERSION' ) ) {
 	define( 'LEW_VERSION', '1.0' );
 }
 
+// Plugin directory path
 if ( ! defined( 'LEW_PLUGIN_DIR' ) ) {
 	define( 'LEW_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 }
 
+// Plugin directory URL
 if ( ! defined( 'LEW_PLUGIN_URL' ) ) {
 	define( 'LEW_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 
-if ( ! defined( 'LEW_BUILDER_DIR' ) ) {
-	define( 'LEW_BUILDER_DIR', LEW_PLUGIN_DIR );
+/**
+ * ============================================================================
+ * DEFINE US CORE COMPATIBLE CONSTANTS
+ * ============================================================================
+ * These constants mimic us-core plugin structure for compatibility
+ */
+
+// US Core directory (point to our plugin directory)
+if ( ! defined( 'US_CORE_DIR' ) ) {
+	define( 'US_CORE_DIR', LEW_PLUGIN_DIR );
 }
 
-if ( ! defined( 'LEW_BUILDER_URL' ) ) {
-	define( 'LEW_BUILDER_URL', LEW_PLUGIN_URL );
+// US Core URI (point to our plugin URL)
+if ( ! defined( 'US_CORE_URI' ) ) {
+	define( 'US_CORE_URI', LEW_PLUGIN_URL );
 }
+
+// US Core version
+if ( ! defined( 'US_CORE_VERSION' ) ) {
+	define( 'US_CORE_VERSION', LEW_VERSION );
+}
+
+// Builder directory
+if ( ! defined( 'US_BUILDER_DIR' ) ) {
+	define( 'US_BUILDER_DIR', LEW_PLUGIN_DIR . 'builder' );
+}
+
+// Builder URL
+if ( ! defined( 'US_BUILDER_URL' ) ) {
+	define( 'US_BUILDER_URL', LEW_PLUGIN_URL . 'builder' );
+}
+
+// Theme name constant (required by builder UI)
+if ( ! defined( 'US_THEMENAME' ) ) {
+	define( 'US_THEMENAME', 'Impreza' );
+}
+
+// Typography tags
+if ( ! defined( 'US_TYPOGRAPHY_TAGS' ) ) {
+	define( 'US_TYPOGRAPHY_TAGS', array( 'body', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ) );
+}
+
+// Typography style tag id in builder
+if ( ! defined( 'US_BUILDER_TYPOGRAPHY_TAG_ID' ) ) {
+	define( 'US_BUILDER_TYPOGRAPHY_TAG_ID', 'usb-customize-fonts' );
+}
+
+/**
+ * ============================================================================
+ * INITIALIZE GLOBAL VARIABLES FOR FILE SEARCH
+ * ============================================================================
+ */
+global $us_template_directory, $us_stylesheet_directory, $us_template_directory_uri, $us_stylesheet_directory_uri;
+global $us_files_search_paths, $us_file_paths;
+
+// Set template directory variables (plugin acts as theme)
+$us_template_directory = LEW_PLUGIN_DIR;
+$us_stylesheet_directory = LEW_PLUGIN_DIR;
+$us_template_directory_uri = LEW_PLUGIN_URL;
+$us_stylesheet_directory_uri = LEW_PLUGIN_URL;
+
+// Reinitialize file search paths
+unset( $us_files_search_paths );
+unset( $us_file_paths );
+
+/**
+ * ============================================================================
+ * CHECK WPBAKERY DEPENDENCY
+ * ============================================================================
+ */
 
 /**
  * Check if WPBakery Page Builder is active
@@ -68,32 +139,62 @@ function lew_wpbakery_missing_notice() {
 }
 
 /**
- * Autoloader for LEW classes
- *
- * @param string $class_name The class name
+ * ============================================================================
+ * LOAD HELPER FUNCTIONS
+ * ============================================================================
  */
-function lew_autoload( $class_name ) {
-	// Map of available classes
-	$class_map = array(
-		'LEW_Builder'   => 'class-lew-builder',
-		'LEW_Ajax'      => 'class-lew-ajax',
-		'LEW_Assets'    => 'class-lew-assets',
-		'LEW_Panel'     => 'class-lew-panel',
-		'LEW_Preview'   => 'class-lew-preview',
-		'LEW_Shortcode' => 'class-lew-shortcode',
-	);
 
-	if ( isset( $class_map[ $class_name ] ) ) {
-		$file = LEW_PLUGIN_DIR . 'includes/' . $class_map[ $class_name ] . '.php';
-		if ( file_exists( $file ) ) {
-			require_once $file;
-		}
-	}
-}
-spl_autoload_register( 'lew_autoload' );
+// Load theme-compatible helper functions (us_locate_file, us_translate, etc.)
+require_once LEW_PLUGIN_DIR . 'includes/theme-helpers.php';
+
+// Load US Core helper functions
+require_once LEW_PLUGIN_DIR . 'includes/us-helpers.php';
+
+// Load Builder-specific helper functions
+require_once LEW_PLUGIN_DIR . 'includes/builder-helpers.php';
 
 /**
- * Initialize the plugin
+ * ============================================================================
+ * INITIALIZE USOF (OPTIONS FRAMEWORK)
+ * ============================================================================
+ */
+
+/**
+ * Initialize USOF Framework
+ */
+function lew_init_usof() {
+	// Load USOF only if it exists
+	if ( file_exists( LEW_PLUGIN_DIR . 'usof/usof.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'usof/usof.php';
+	}
+}
+
+/**
+ * ============================================================================
+ * INITIALIZE BUILDER
+ * ============================================================================
+ */
+
+/**
+ * Initialize the Live Builder
+ * This mimics the us-core initialization process
+ */
+function lew_init_builder() {
+	// Load builder entry point
+	if ( file_exists( LEW_PLUGIN_DIR . 'builder/builder.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'builder/builder.php';
+	}
+}
+
+/**
+ * ============================================================================
+ * PLUGIN INITIALIZATION
+ * ============================================================================
+ */
+
+/**
+ * Main plugin initialization
+ * Runs after theme setup to ensure compatibility
  */
 function lew_init() {
 	// Check if WPBakery is active
@@ -101,14 +202,77 @@ function lew_init() {
 		return;
 	}
 
-	// Load helper functions
-	require_once LEW_PLUGIN_DIR . 'includes/helpers.php';
+	// Initialize USOF framework
+	lew_init_usof();
 
-	// Initialize the builder
-	// Note: Initialize after core and plugins have been initialized
-	new LEW_Builder();
+	// Load WP Background Process (required by builder)
+	if ( file_exists( LEW_PLUGIN_DIR . 'vendor/wp-background-processing/wp-background-processing.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'vendor/wp-background-processing/wp-background-processing.php';
+	}
+
+	// Load fallback functions
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/fallback.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/fallback.php';
+	}
+
+	// Load shortcodes (required by builder)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/shortcodes.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/shortcodes.php';
+	}
+
+	// Load admin functions if in admin
+	if ( is_admin() OR ( defined( 'WP_CLI' ) AND WP_CLI ) ) {
+		// Admin Enqueue
+		if ( file_exists( LEW_PLUGIN_DIR . 'admin/functions/enqueue.php' ) ) {
+			require_once LEW_PLUGIN_DIR . 'admin/functions/enqueue.php';
+		}
+		// Filter Indexer
+		if ( file_exists( LEW_PLUGIN_DIR . 'admin/functions/filter-indexer.php' ) ) {
+			require_once LEW_PLUGIN_DIR . 'admin/functions/filter-indexer.php';
+		}
+		// Optimize assets
+		if ( file_exists( LEW_PLUGIN_DIR . 'admin/functions/optimize-assets.php' ) ) {
+			require_once LEW_PLUGIN_DIR . 'admin/functions/optimize-assets.php';
+		}
+		// Used icons
+		if ( file_exists( LEW_PLUGIN_DIR . 'admin/functions/used-icons.php' ) ) {
+			require_once LEW_PLUGIN_DIR . 'admin/functions/used-icons.php';
+		}
+	}
+
+	// AJAX related functions
+	if ( wp_doing_ajax() ) {
+		$ajax_files = array(
+			'ajax/header_builder.php',
+			'ajax/grid_builder.php',
+			'ajax/grid.php',
+			'ajax/cform.php',
+			'ajax/cart.php',
+			'ajax/cookie_notice.php',
+			'ajax/gallery.php',
+			'ajax/post_list.php',
+			'ajax/add_to_favs.php',
+			'ajax/us_login.php',
+		);
+		foreach ( $ajax_files as $ajax_file ) {
+			if ( file_exists( LEW_PLUGIN_DIR . 'functions/' . $ajax_file ) ) {
+				require_once LEW_PLUGIN_DIR . 'functions/' . $ajax_file;
+			}
+		}
+	}
+
+	// Initialize the builder (priority 8 to run before other theme setups)
+	lew_init_builder();
 }
-add_action( 'plugins_loaded', 'lew_init', 20 );
+
+// Hook into after_setup_theme with priority 8 (same as us-core)
+add_action( 'after_setup_theme', 'lew_init', 8 );
+
+/**
+ * ============================================================================
+ * PLUGIN ACTIVATION HOOK
+ * ============================================================================
+ */
 
 /**
  * Plugin activation hook
@@ -122,5 +286,17 @@ function lew_activate() {
 			array( 'back_link' => true )
 		);
 	}
+
+	// Flush rewrite rules
+	flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'lew_activate' );
+
+/**
+ * Plugin deactivation hook
+ */
+function lew_deactivate() {
+	// Flush rewrite rules
+	flush_rewrite_rules();
+}
+register_deactivation_hook( __FILE__, 'lew_deactivate' );
