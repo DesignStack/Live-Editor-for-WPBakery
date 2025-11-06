@@ -1,6 +1,6 @@
 # Live Editor for WPBakery
 
-**Version:** 1.0
+**Version:** 1.03
 **Author:** DesignStack
 **Requires:** WordPress 5.0+, WPBakery Page Builder
 **License:** GPL v2 or later
@@ -161,6 +161,37 @@ Custom CSS is stored in two post meta fields:
 Both are updated simultaneously to ensure compatibility with WPBakery's native editor.
 
 ## Changelog
+
+### 1.03
+- Added all remaining function files from us-core for complete compatibility
+- Fixed fatal error: us_get_nav_menus() undefined in additional_menu.php
+- Added header.php (navigation menu functions)
+- Added widget_areas.php, widgets.php (widget management)
+- Added theme-options.php (theme options support)
+- Added breadcrumbs.php (breadcrumb functions)
+- Added cookie-notice.php (cookie notice functions)
+- Added enqueue.php (asset loading functions)
+- Added meta-tags.php (meta tag functions)
+- Added post-types.php (custom post type functions)
+- Added migration.php (version migration functions)
+- Added init.php (initialization functions)
+- Added helpers.php (utility functions)
+
+### 1.02
+- Fixed fatal error: us_grid_available_post_types() undefined
+- Added grid.php (grid element functions)
+- Added list.php (list element functions)
+- Added media.php (media handling functions)
+- Added post.php (post element functions)
+- Added layout.php (layout functions)
+
+### 1.01
+- Complete rewrite with full us-core integration
+- Copied entire builder system (482 files)
+- Added USOF framework for form fields
+- Added all element configurations
+- Added all templates and assets
+- Full compatibility with Impreza's us-builder interface
 
 ### 1.0 (Initial Release)
 - Live frontend editing interface

@@ -3,7 +3,7 @@
  * Plugin Name: Live Editor for WPBakery
  * Plugin URI: https://designstack.co.uk
  * Description: Enhances WPBakery Page Builder with a live frontend editor interface for real-time visual editing. This plugin brings the powerful US Builder (Live Editor) from Impreza theme to any WordPress site using WPBakery.
- * Version: 1.02
+ * Version: 1.03
  * Author: DesignStack
  * Author URI: https://designstack.co.uk
  * Text Domain: live-editor-wpbakery
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Plugin version
 if ( ! defined( 'LEW_VERSION' ) ) {
-	define( 'LEW_VERSION', '1.02' );
+	define( 'LEW_VERSION', '1.03' );
 }
 
 // Plugin directory path
@@ -243,6 +243,66 @@ function lew_init() {
 	// Load layout functions (required for layout)
 	if ( file_exists( LEW_PLUGIN_DIR . 'functions/layout.php' ) ) {
 		require_once LEW_PLUGIN_DIR . 'functions/layout.php';
+	}
+
+	// Load header functions (required for navigation menus)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/header.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/header.php';
+	}
+
+	// Load widget area functions (required for widget areas)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/widget_areas.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/widget_areas.php';
+	}
+
+	// Load widget functions (required for widgets)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/widgets.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/widgets.php';
+	}
+
+	// Load theme options functions (required for theme options)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/theme-options.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/theme-options.php';
+	}
+
+	// Load breadcrumb functions (required for breadcrumbs)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/breadcrumbs.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/breadcrumbs.php';
+	}
+
+	// Load cookie notice functions (required for cookie notices)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/cookie-notice.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/cookie-notice.php';
+	}
+
+	// Load enqueue functions (required for asset loading)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/enqueue.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/enqueue.php';
+	}
+
+	// Load meta tags functions (required for meta tags)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/meta-tags.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/meta-tags.php';
+	}
+
+	// Load post types functions (required for custom post types)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/post-types.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/post-types.php';
+	}
+
+	// Load migration functions (required for version migrations)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/migration.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/migration.php';
+	}
+
+	// Load init functions (required for initialization)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/init.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/init.php';
+	}
+
+	// Load helper functions (required for utilities)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/helpers.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/helpers.php';
 	}
 
 	// Load admin functions if in admin
