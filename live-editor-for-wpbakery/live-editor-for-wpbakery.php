@@ -3,7 +3,7 @@
  * Plugin Name: Live Editor for WPBakery
  * Plugin URI: https://designstack.co.uk
  * Description: Enhances WPBakery Page Builder with a live frontend editor interface for real-time visual editing. This plugin brings the powerful US Builder (Live Editor) from Impreza theme to any WordPress site using WPBakery.
- * Version: 1.0
+ * Version: 1.02
  * Author: DesignStack
  * Author URI: https://designstack.co.uk
  * Text Domain: live-editor-wpbakery
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Plugin version
 if ( ! defined( 'LEW_VERSION' ) ) {
-	define( 'LEW_VERSION', '1.0' );
+	define( 'LEW_VERSION', '1.02' );
 }
 
 // Plugin directory path
@@ -218,6 +218,31 @@ function lew_init() {
 	// Load shortcodes (required by builder)
 	if ( file_exists( LEW_PLUGIN_DIR . 'functions/shortcodes.php' ) ) {
 		require_once LEW_PLUGIN_DIR . 'functions/shortcodes.php';
+	}
+
+	// Load grid functions (required for grid elements)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/grid.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/grid.php';
+	}
+
+	// Load list functions (required for list elements)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/list.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/list.php';
+	}
+
+	// Load media functions (required for media handling)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/media.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/media.php';
+	}
+
+	// Load post functions (required for post elements)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/post.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/post.php';
+	}
+
+	// Load layout functions (required for layout)
+	if ( file_exists( LEW_PLUGIN_DIR . 'functions/layout.php' ) ) {
+		require_once LEW_PLUGIN_DIR . 'functions/layout.php';
 	}
 
 	// Load admin functions if in admin
