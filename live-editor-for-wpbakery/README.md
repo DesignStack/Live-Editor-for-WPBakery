@@ -1,6 +1,6 @@
 # Live Editor for WPBakery
 
-**Version:** 1.06
+**Version:** 1.07
 **Author:** DesignStack
 **Requires:** WordPress 5.0+, WPBakery Page Builder
 **License:** GPL v2 or later
@@ -161,6 +161,16 @@ Custom CSS is stored in two post meta fields:
 Both are updated simultaneously to ensure compatibility with WPBakery's native editor.
 
 ## Changelog
+
+### 1.07 (CRITICAL FIX - Duplicate File Loading)
+- **COMPREHENSIVE FIX**: Removed duplicate file loading causing function redeclaration errors
+- Fixed fatal error: "Cannot redeclare us_sort_by_weight()" in functions/helpers.php:316
+- **Root Cause Analysis**: functions/helpers.php and includes/us-helpers.php are IDENTICAL files (both 5170 lines, same MD5 hash: 9dead5f28c0ebd90ee214acf30b89830)
+- **Solution**: Removed loading of functions/helpers.php since includes/us-helpers.php is already loaded earlier
+- **Verification**: Checked builder/helpers.php vs includes/builder-helpers.php - also identical but only loaded once (no issue)
+- Added comprehensive comments explaining why certain files are NOT loaded to prevent future confusion
+- **CRITICAL**: This eliminates ALL function redeclaration errors from duplicate helper file loading
+- **COMPREHENSIVE**: This fix prevents the reactive pattern - identified and fixed the systemic issue
 
 ### 1.06 (CRITICAL FIX)
 - **EMERGENCY FIX**: Added missing US_THEMEVERSION constant

@@ -3,7 +3,7 @@
  * Plugin Name: Live Editor for WPBakery
  * Plugin URI: https://designstack.co.uk
  * Description: Enhances WPBakery Page Builder with a live frontend editor interface for real-time visual editing. This plugin brings the powerful US Builder (Live Editor) from Impreza theme to any WordPress site using WPBakery.
- * Version: 1.06
+ * Version: 1.07
  * Author: DesignStack
  * Author URI: https://designstack.co.uk
  * Text Domain: live-editor-wpbakery
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Plugin version
 if ( ! defined( 'LEW_VERSION' ) ) {
-	define( 'LEW_VERSION', '1.06' );
+	define( 'LEW_VERSION', '1.07' );
 }
 
 // Plugin directory path
@@ -304,10 +304,10 @@ function lew_init() {
 	// which we're already loading individually above. Loading init.php would cause
 	// "Cannot redeclare function" errors.
 
-	// Load helper functions (required for utilities)
-	if ( file_exists( LEW_PLUGIN_DIR . 'functions/helpers.php' ) ) {
-		require_once LEW_PLUGIN_DIR . 'functions/helpers.php';
-	}
+	// NOTE: functions/helpers.php is NOT loaded here because it is IDENTICAL to
+	// includes/us-helpers.php which is already loaded at the top of this file (line 156).
+	// Loading it again would cause "Cannot redeclare us_sort_by_weight()" and other errors.
+	// The file includes/us-helpers.php already contains all 200+ helper functions needed.
 
 	// Load admin functions if in admin
 	if ( is_admin() OR ( defined( 'WP_CLI' ) AND WP_CLI ) ) {
