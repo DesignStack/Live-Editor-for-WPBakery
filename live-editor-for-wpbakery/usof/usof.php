@@ -31,20 +31,22 @@ if ( is_admin() ) {
  * @param mixed $default_value
  * @return mixed
  */
-function usof_get_option( $name, $default_value = NULL ) {
-	global $usof_options;
-	usof_load_options_once();
+if ( ! function_exists( 'usof_get_option' ) ) {
+	function usof_get_option( $name, $default_value = NULL ) {
+		global $usof_options;
+		usof_load_options_once();
 
-	if ( is_null( $default_value ) ) {
-		$default_value = usof_defaults( $name );
+		if ( is_null( $default_value ) ) {
+			$default_value = usof_defaults( $name );
+		}
+
+		$value = $default_value;
+		if ( isset( $usof_options[ $name ] ) ) {
+			$value = $usof_options[ $name ];
+		}
+
+		return apply_filters( 'usof_get_option_' . $name, $value );
 	}
-
-	$value = $default_value;
-	if ( isset( $usof_options[ $name ] ) ) {
-		$value = $usof_options[ $name ];
-	}
-
-	return apply_filters( 'usof_get_option_' . $name, $value );
 }
 
 /**
@@ -53,58 +55,60 @@ function usof_get_option( $name, $default_value = NULL ) {
  * @param array $field
  * @return string
  */
-function usof_get_default( &$field ) {
+if ( ! function_exists( 'usof_get_default' ) ) {
+	function usof_get_default( &$field ) {
 
-	if ( ! is_array( $field ) OR ! isset( $field['type'] ) ) {
-		return '';
-	}
-
-	$no_values_types = array(
-		'backup',
-		'heading',
-		'message',
-		'transfer',
-		'wrapper_start',
-		'wrapper_end',
-	);
-
-	$selectable_types = array(
-		'imgradio',
-		'radio',
-		'select',
-		'style_scheme',
-	);
-
-	// Get current field type
-	$field_type = $field['type'];
-
-	if ( in_array( $field_type, $no_values_types ) ) {
-		return '';
-	}
-
-	// Using first value as standard for selectable types
-	if ( ! isset( $field['std'] ) AND in_array( $field_type, $selectable_types ) ) {
-		if ( ! empty( $field['options'] ) AND is_array( $field['options'] ) ) {
-			$field['std'] = key( $field['options'] );
-			reset( $field['options'] );
+		if ( ! is_array( $field ) OR ! isset( $field['type'] ) ) {
+			return '';
 		}
-	}
 
-	// Get default values for typography options
-	if ( $field_type == 'typography_options' ) {
-		if ( isset( $field['fields'] ) AND is_array( $field['fields'] ) ) {
-			foreach ( $field['fields'] as $name => $item_field ) {
-				if ( isset( $item_field['std'] ) ) {
-					$field['std'][ $name ] = $item_field['std'];
+		$no_values_types = array(
+			'backup',
+			'heading',
+			'message',
+			'transfer',
+			'wrapper_start',
+			'wrapper_end',
+		);
+
+		$selectable_types = array(
+			'imgradio',
+			'radio',
+			'select',
+			'style_scheme',
+		);
+
+		// Get current field type
+		$field_type = $field['type'];
+
+		if ( in_array( $field_type, $no_values_types ) ) {
+			return '';
+		}
+
+		// Using first value as standard for selectable types
+		if ( ! isset( $field['std'] ) AND in_array( $field_type, $selectable_types ) ) {
+			if ( ! empty( $field['options'] ) AND is_array( $field['options'] ) ) {
+				$field['std'] = key( $field['options'] );
+				reset( $field['options'] );
+			}
+		}
+
+		// Get default values for typography options
+		if ( $field_type == 'typography_options' ) {
+			if ( isset( $field['fields'] ) AND is_array( $field['fields'] ) ) {
+				foreach ( $field['fields'] as $name => $item_field ) {
+					if ( isset( $item_field['std'] ) ) {
+						$field['std'][ $name ] = $item_field['std'];
+					}
 				}
 			}
 		}
-	}
 
-	if ( ! isset( $field['std'] ) ) {
-		$field['std'] = '';
+		if ( ! isset( $field['std'] ) ) {
+			$field['std'] = '';
+		}
+		return $field['std'];
 	}
-	return $field['std'];
 }
 
 /**
@@ -113,78 +117,82 @@ function usof_get_default( &$field ) {
  * @param string $key If set, retreive only one default value
  * @return mixed Array of values or a single value if the $key is specified
  */
-function usof_defaults( $key = NULL ) {
-	$config = (array) us_config( 'theme-options' );
+if ( ! function_exists( 'usof_defaults' ) ) {
+	function usof_defaults( $key = NULL ) {
+		$config = (array) us_config( 'theme-options' );
 
-	$values = array();
-	foreach ( $config as &$section ) {
-		if ( ! isset( $section['fields'] ) ) {
-			continue;
-		}
-		foreach ( $section['fields'] as $field_id => &$field ) {
-			if ( ! is_null( $key ) AND $field_id != $key ) {
+		$values = array();
+		foreach ( $config as &$section ) {
+			if ( ! isset( $section['fields'] ) ) {
 				continue;
 			}
-			if ( isset( $values[ $field_id ] ) ) {
-				continue;
-			}
-
-			if ( isset( $field['type'] ) AND $field['type'] == 'style_scheme' ) {
-				$options = array_keys( us_config( 'color-schemes' ) );
-				if ( empty( $options ) ) {
+			foreach ( $section['fields'] as $field_id => &$field ) {
+				if ( ! is_null( $key ) AND $field_id != $key ) {
 					continue;
 				}
-				if ( ! isset( $field['std'] ) ) {
-					$field['std'] = $options[ 0 ];
+				if ( isset( $values[ $field_id ] ) ) {
+					continue;
 				}
-				// If theme has default style scheme, it's values will be used as standard as well
-				$values = array_merge( $values, us_config( 'color-schemes.' . $field['std'] . '.values' ) );
-			}
 
-			$default_value = usof_get_default( $field );
-			if ( ! is_null( $default_value ) ) {
-				$values[ $field_id ] = $default_value;
+				if ( isset( $field['type'] ) AND $field['type'] == 'style_scheme' ) {
+					$options = array_keys( us_config( 'color-schemes' ) );
+					if ( empty( $options ) ) {
+						continue;
+					}
+					if ( ! isset( $field['std'] ) ) {
+						$field['std'] = $options[ 0 ];
+					}
+					// If theme has default style scheme, it's values will be used as standard as well
+					$values = array_merge( $values, us_config( 'color-schemes.' . $field['std'] . '.values' ) );
+				}
+
+				$default_value = usof_get_default( $field );
+				if ( ! is_null( $default_value ) ) {
+					$values[ $field_id ] = $default_value;
+				}
 			}
 		}
-	}
 
-	if ( ! is_null( $key ) ) {
-		return isset( $values[ $key ] )
-			? $values[ $key ]
-			: ''; // default
-	}
+		if ( ! is_null( $key ) ) {
+			return isset( $values[ $key ] )
+				? $values[ $key ]
+				: ''; // default
+		}
 
-	return $values;
+		return $values;
+	}
 }
 
 /**
  * If the options were not loaded, load them
  */
-function usof_load_options_once( $force_reload = FALSE ) {
-	global $usof_options;
+if ( ! function_exists( 'usof_load_options_once' ) ) {
+	function usof_load_options_once( $force_reload = FALSE ) {
+		global $usof_options;
 
-	if ( isset( $usof_options ) AND ! $force_reload ) {
-		return;
-	}
-	if ( ! defined( 'US_THEMENAME' ) ) {
-		return;
-	}
-	$usof_options = get_option( 'usof_options_' . US_THEMENAME );
-	if ( $usof_options === FALSE ) {
-		// Trying to fetch the old good SMOF options
-		$usof_options = get_option( US_THEMENAME . '_options' );
-		if ( $usof_options !== FALSE ) {
-			// Disabling the old options autoload
-			update_option( US_THEMENAME . '_options', $usof_options, FALSE );
-		} else {
-			// Not defined yet, using default values
-			$usof_options = usof_defaults();
+		if ( isset( $usof_options ) AND ! $force_reload ) {
+			return;
+		}
+		if ( ! defined( 'US_THEMENAME' ) ) {
+			return;
+		}
+		$usof_options = get_option( 'usof_options_' . US_THEMENAME );
+		if ( $usof_options === FALSE ) {
+			// Trying to fetch the old good SMOF options
+			$usof_options = get_option( US_THEMENAME . '_options' );
+			if ( $usof_options !== FALSE ) {
+				// Disabling the old options autoload
+				update_option( US_THEMENAME . '_options', $usof_options, FALSE );
+			} else {
+				// Not defined yet, using default values
+				$usof_options = usof_defaults();
+			}
+
+			update_option( 'usof_options_' . US_THEMENAME, $usof_options, TRUE );
 		}
 
-		update_option( 'usof_options_' . US_THEMENAME, $usof_options, TRUE );
+		$usof_options = apply_filters( 'usof_load_options_once', $usof_options );
 	}
-
-	$usof_options = apply_filters( 'usof_load_options_once', $usof_options );
 }
 
 /**
@@ -192,24 +200,26 @@ function usof_load_options_once( $force_reload = FALSE ) {
  *
  * @param array $updated_options Array of the new options values
  */
-function usof_save_options( $updated_options ) {
+if ( ! function_exists( 'usof_save_options' ) ) {
+	function usof_save_options( $updated_options ) {
 
-	if ( ! is_array( $updated_options ) OR empty( $updated_options ) ) {
-		return;
+		if ( ! is_array( $updated_options ) OR empty( $updated_options ) ) {
+			return;
+		}
+
+		global $usof_options;
+		usof_load_options_once();
+
+		do_action( 'usof_before_save', $updated_options );
+
+		$usof_options = has_filter( 'usof_updated_options' )
+			? apply_filters( 'usof_updated_options', $updated_options )
+			: $updated_options;
+
+		update_option( 'usof_options_' . US_THEMENAME, $usof_options, TRUE );
+
+		do_action( 'usof_after_save', $updated_options );
 	}
-
-	global $usof_options;
-	usof_load_options_once();
-
-	do_action( 'usof_before_save', $updated_options );
-
-	$usof_options = has_filter( 'usof_updated_options' )
-		? apply_filters( 'usof_updated_options', $updated_options )
-		: $updated_options;
-
-	update_option( 'usof_options_' . US_THEMENAME, $usof_options, TRUE );
-
-	do_action( 'usof_after_save', $updated_options );
 }
 
 /**
@@ -240,62 +250,64 @@ if ( ! function_exists( 'usof_backup' ) ) {
  *
  * @return bool
  */
-function usof_execute_show_if( $condition, &$values = NULL ) {
-	if ( ! is_array( $condition ) OR count( $condition ) < 3 ) {
-		// Wrong condition
-		$result = TRUE;
-	} elseif ( in_array( strtolower( $condition[1] ), array( 'and', 'or' ) ) ) {
-		// Complex or / and statement
-		$result = usof_execute_show_if( $condition[0], $values );
-		$index = 2;
-		while ( isset( $condition[ $index ] ) ) {
-			$condition[ $index - 1 ] = strtolower( $condition[ $index - 1 ] );
-			if ( $condition[ $index - 1 ] == 'and' ) {
-				$result = ( $result AND usof_execute_show_if( $condition[ $index ], $values ) );
-			} elseif ( $condition[ $index - 1 ] == 'or' ) {
-				$result = ( $result OR usof_execute_show_if( $condition[ $index ], $values ) );
-			}
-			$index = $index + 2;
-		}
-	} else {
-		if ( ! isset( $values[ $condition[0] ] ) ) {
-			if ( $condition[1] == '=' AND ( ! in_array( $condition[2], array( 0, '', FALSE, NULL ) ) ) ) {
-				return FALSE;
-			} elseif ( $condition[1] == '!=' AND in_array( $condition[2], array( 0, '', FALSE, NULL ) ) ) {
-				return FALSE;
-			} else {
-				return TRUE;
-			}
-		}
-		$value = $values[ $condition[0] ];
-		if ( $condition[1] == '=' ) {
-			if ( is_array( $condition[2] ) ) {
-				$result = ( in_array( $value, $condition[2] ) );
-			} else {
-				$result = ( $value == $condition[2] );
-			}
-		} elseif ( $condition[1] == '!=' ) {
-			if ( is_array( $condition[2] ) ) {
-				$result = ( ! in_array( $value, $condition[2] ) );
-			} else {
-				$result = ( $value != $condition[2] );
-			}
-		} elseif ( $condition[1] == '<=' ) {
-			$result = ( $value <= $condition[2] );
-		} elseif ( $condition[1] == '<' ) {
-			$result = ( $value < $condition[2] );
-		} elseif ( $condition[1] == '>' ) {
-			$result = ( $value > $condition[2] );
-		} elseif ( $condition[1] == '>=' ) {
-			$result = ( $value >= $condition[2] );
-		} elseif ( $condition[1] == 'str_contains' ) {
-			$result = strpos( (string) $value, $condition[2] ) !== FALSE;
-		} else {
+if ( ! function_exists( 'usof_execute_show_if' ) ) {
+	function usof_execute_show_if( $condition, &$values = NULL ) {
+		if ( ! is_array( $condition ) OR count( $condition ) < 3 ) {
+			// Wrong condition
 			$result = TRUE;
+		} elseif ( in_array( strtolower( $condition[1] ), array( 'and', 'or' ) ) ) {
+			// Complex or / and statement
+			$result = usof_execute_show_if( $condition[0], $values );
+			$index = 2;
+			while ( isset( $condition[ $index ] ) ) {
+				$condition[ $index - 1 ] = strtolower( $condition[ $index - 1 ] );
+				if ( $condition[ $index - 1 ] == 'and' ) {
+					$result = ( $result AND usof_execute_show_if( $condition[ $index ], $values ) );
+				} elseif ( $condition[ $index - 1 ] == 'or' ) {
+					$result = ( $result OR usof_execute_show_if( $condition[ $index ], $values ) );
+				}
+				$index = $index + 2;
+			}
+		} else {
+			if ( ! isset( $values[ $condition[0] ] ) ) {
+				if ( $condition[1] == '=' AND ( ! in_array( $condition[2], array( 0, '', FALSE, NULL ) ) ) ) {
+					return FALSE;
+				} elseif ( $condition[1] == '!=' AND in_array( $condition[2], array( 0, '', FALSE, NULL ) ) ) {
+					return FALSE;
+				} else {
+					return TRUE;
+				}
+			}
+			$value = $values[ $condition[0] ];
+			if ( $condition[1] == '=' ) {
+				if ( is_array( $condition[2] ) ) {
+					$result = ( in_array( $value, $condition[2] ) );
+				} else {
+					$result = ( $value == $condition[2] );
+				}
+			} elseif ( $condition[1] == '!=' ) {
+				if ( is_array( $condition[2] ) ) {
+					$result = ( ! in_array( $value, $condition[2] ) );
+				} else {
+					$result = ( $value != $condition[2] );
+				}
+			} elseif ( $condition[1] == '<=' ) {
+				$result = ( $value <= $condition[2] );
+			} elseif ( $condition[1] == '<' ) {
+				$result = ( $value < $condition[2] );
+			} elseif ( $condition[1] == '>' ) {
+				$result = ( $value > $condition[2] );
+			} elseif ( $condition[1] == '>=' ) {
+				$result = ( $value >= $condition[2] );
+			} elseif ( $condition[1] == 'str_contains' ) {
+				$result = strpos( (string) $value, $condition[2] ) !== FALSE;
+			} else {
+				$result = TRUE;
+			}
 		}
-	}
 
-	return $result;
+		return $result;
+	}
 }
 
 if ( ! function_exists( 'usof_get_color_vars' ) ) {

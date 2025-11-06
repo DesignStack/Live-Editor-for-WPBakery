@@ -1,6 +1,6 @@
 # Live Editor for WPBakery
 
-**Version:** 1.04
+**Version:** 1.05
 **Author:** DesignStack
 **Requires:** WordPress 5.0+, WPBakery Page Builder
 **License:** GPL v2 or later
@@ -161,6 +161,20 @@ Custom CSS is stored in two post meta fields:
 Both are updated simultaneously to ensure compatibility with WPBakery's native editor.
 
 ## Changelog
+
+### 1.05 (CRITICAL FIX)
+- **EMERGENCY FIX**: Added function_exists() checks to ALL functions in usof.php
+- Fixed fatal error: "Cannot redeclare usof_get_option()" that was blocking site launch
+- Protected 6 functions with function_exists() checks:
+  * usof_get_option() - Get theme option values
+  * usof_get_default() - Get default field values
+  * usof_defaults() - Get all default values
+  * usof_load_options_once() - Load options from database
+  * usof_save_options() - Save options to database
+  * usof_execute_show_if() - Check conditional display logic
+- This is defensive programming to prevent ANY possibility of function redeclaration
+- Even if usof.php is somehow loaded multiple times, functions won't redeclare
+- **CRITICAL**: This fix ensures the plugin can activate and run without fatal errors
 
 ### 1.04
 - Fixed fatal error: "Cannot redeclare usof_get_option()" function redeclaration error
