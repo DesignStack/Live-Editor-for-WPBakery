@@ -1,6 +1,6 @@
 # Live Editor for WPBakery
 
-**Version:** 1.03
+**Version:** 1.04
 **Author:** DesignStack
 **Requires:** WordPress 5.0+, WPBakery Page Builder
 **License:** GPL v2 or later
@@ -161,6 +161,13 @@ Custom CSS is stored in two post meta fields:
 Both are updated simultaneously to ensure compatibility with WPBakery's native editor.
 
 ## Changelog
+
+### 1.04
+- Fixed fatal error: "Cannot redeclare usof_get_option()" function redeclaration error
+- Changed `require` to `require_once` in theme-options.php for usof.php loading
+- Removed init.php from loading sequence to prevent duplicate file includes
+- init.php was trying to load all function files that were already loaded in main plugin file
+- This fixes all function redeclaration errors caused by duplicate requires
 
 ### 1.03
 - Added all remaining function files from us-core for complete compatibility

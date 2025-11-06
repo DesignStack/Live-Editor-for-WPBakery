@@ -551,7 +551,7 @@ if ( ! function_exists( 'us_replace_login_logo_url' ) ) {
 
 // Using USOF for theme options
 $usof_directory = US_CORE_DIR . 'usof';
-require $usof_directory . '/usof.php';
+require_once $usof_directory . '/usof.php';
 
 // Exclude pages that are set as Search results / Posts page / 404 not found
 add_action( 'pre_get_posts', 'us_exclude_special_pages_from_search' );
