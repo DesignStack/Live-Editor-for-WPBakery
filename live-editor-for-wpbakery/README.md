@@ -1,6 +1,6 @@
 # Live Editor for WPBakery
 
-**Version:** 1.05
+**Version:** 1.06
 **Author:** DesignStack
 **Requires:** WordPress 5.0+, WPBakery Page Builder
 **License:** GPL v2 or later
@@ -161,6 +161,14 @@ Custom CSS is stored in two post meta fields:
 Both are updated simultaneously to ensure compatibility with WPBakery's native editor.
 
 ## Changelog
+
+### 1.06 (CRITICAL FIX)
+- **EMERGENCY FIX**: Added missing US_THEMEVERSION constant
+- Fixed fatal error: "Undefined constant US_THEMEVERSION" in migration.php:119
+- Migration system requires US_THEMEVERSION to determine database version
+- Added constant definition: `define( 'US_THEMEVERSION', LEW_VERSION )`
+- This allows the migration system to work properly in standalone plugin mode
+- **CRITICAL**: This fix allows the plugin to fully activate without crashing
 
 ### 1.05 (CRITICAL FIX)
 - **EMERGENCY FIX**: Added function_exists() checks to ALL functions in usof.php
