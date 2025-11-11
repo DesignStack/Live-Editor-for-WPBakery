@@ -3,7 +3,7 @@
  * Plugin Name: Live Editor for WPBakery
  * Plugin URI: https://designstack.co.uk
  * Description: Enhances WPBakery Page Builder with a live frontend editor interface for real-time visual editing. This plugin brings the powerful US Builder (Live Editor) from Impreza theme to any WordPress site using WPBakery.
- * Version: 1.08
+ * Version: 1.09
  * Author: DesignStack
  * Author URI: https://designstack.co.uk
  * Text Domain: live-editor-wpbakery
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Plugin version
 if ( ! defined( 'LEW_VERSION' ) ) {
-	define( 'LEW_VERSION', '1.08' );
+	define( 'LEW_VERSION', '1.09' );
 }
 
 // Plugin directory path

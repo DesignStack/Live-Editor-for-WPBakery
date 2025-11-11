@@ -1,6 +1,6 @@
 # Live Editor for WPBakery
 
-**Version:** 1.08
+**Version:** 1.09
 **Author:** DesignStack
 **Requires:** WordPress 5.0+, WPBakery Page Builder
 **License:** GPL v2 or later
@@ -161,6 +161,19 @@ Custom CSS is stored in two post meta fields:
 Both are updated simultaneously to ensure compatibility with WPBakery's native editor.
 
 ## Changelog
+
+### 1.09 (CRITICAL FIX - Missing Admin Function)
+- **COMPREHENSIVE FIX**: Fixed "Call to undefined function us_admin_print_styles()" in USBuilder.class.php:208
+- **Root Cause**: Builder tried to call us_admin_print_styles() which wasn't defined in standalone plugin
+- **Proactive Analysis**: Scanned ALL function calls in USBuilder.class.php to find missing functions:
+  * Checked 14 us_ functions: us_admin_print_styles, us_arr_path, us_array_merge, us_config, us_get_img_placeholder, us_get_jsoncss_options, us_get_option, us_get_public_post_types, us_get_responsive_states, us_get_shortcode_full_name, us_get_shortcode_name, us_grid_available_post_types_for_import, us_load_template, us_translate
+  * All functions existed EXCEPT us_admin_print_styles
+- **Solution**: Added us_admin_print_styles() function to includes/us-helpers.php
+  * Function outputs admin styles via action hook
+  * Wrapped with function_exists() check for safety
+  * Provides compatibility for builder's admin style requirements
+- **COMPREHENSIVE**: Verified ALL other builder functions exist - no other missing functions found
+- This prevents fatal error when builder loads and tries to output admin styles
 
 ### 1.08 (CRITICAL FIX - Missing Widget Files)
 - **COMPREHENSIVE FIX**: Fixed ValueError "Path cannot be empty" in widgets.php:194

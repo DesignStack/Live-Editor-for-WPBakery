@@ -5168,3 +5168,16 @@ if ( ! function_exists( 'us_get_user_ids_for_autocomplete' ) ) {
 		wp_die();
 	}
 }
+
+/**
+ * Print admin styles for builder
+ * This function outputs necessary admin styles when the builder is loaded
+ * Added for Live Editor for WPBakery compatibility
+ */
+if ( ! function_exists( 'us_admin_print_styles' ) ) {
+	function us_admin_print_styles() {
+		// Output admin styles if available
+		// This is a compatibility function for the builder
+		do_action( 'us_admin_print_styles' );
+	}
+}
